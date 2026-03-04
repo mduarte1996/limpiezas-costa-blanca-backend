@@ -42,18 +42,20 @@ requirements.txt
 
 🛠️ Instalación local
 
-Clonar el repositorio
+1.Clonar el repositorio
 
-Crear entorno virtual
+2.Crear entorno virtual
 
-Instalar dependencias:
+3.Instalar dependencias:
 
 pip install -r requirements.txt
 
-*Ejecutar migraciones* :
+4.Ejecutar migraciones:
+
 flask db upgrade
 
-*Ejecutar la aplicación* :
+5.Ejecutar la aplicación:
+
 python app.py
 
 📌 Estado del proyecto
@@ -64,5 +66,6 @@ python app.py
 
 👩‍💻 Autora
 
-Desarrollado por Maria Fernanda Duarte
+Desarrollado por Maria Fernanda Duarte,
 Proyecto backend orientado a negocio real y portfolio profesional.
+
