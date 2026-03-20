@@ -1,11 +1,13 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from extensions import db, migrate
 from models import ServiceRequest
 from datetime import datetime
-
-
+from flask_cors import CORS
+ 
 
 app = Flask(__name__)
+CORS(app)
+
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
@@ -40,9 +42,26 @@ def create_service_request():
 
 @app.route("/service-request", methods=["GET"])
 def get_service_requests():
-    requests = ServiceRequest.query.all()
+    services = ServiceRequest.query.all()
 
-    return [request.serialize() for request in requests], 200 
+    result = []
+    for service in services:
+        result.append({
+            "id": service.id,
+            "client_name": service.client_name,
+            "phone": service.phone,
+            "address": service.address,
+            "service_type": service.service_type,
+            "status": service.status
+        })
+
+    return result, 200
+
+# @app.route("/service-request", methods=["GET"])
+# def get_service_requests():
+#     requests = ServiceRequest.query.all()
+
+#     return [request.serialize() for request in requests], 200 
 
 
 # Endpoint para actualizar el estado de una solicitud
@@ -80,4 +99,18 @@ def delete_service_request(id):
     return {"message": "Solicitud eliminada correctamente"}, 200
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True) 
+
+
+@app.route("/login", methods=["POST"])
+def login():
+
+    data = request.json
+
+    username = data.get("username")
+    password = data.get("password")
+
+    if username == "admin" and password == "1234":
+        return jsonify({"token": "abc123"}), 200
+
+    return jsonify({"error": "Credenciales incorrectas"}), 401
