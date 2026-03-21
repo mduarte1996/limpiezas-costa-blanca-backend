@@ -4,16 +4,20 @@ from models import ServiceRequest
 from datetime import datetime
 from flask_cors import CORS
  
-
 app = Flask(__name__)
 CORS(app)
 
+# PRIMERO CONFIG
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
+# LUEGO INICIALIZAR
 db.init_app(app)
 migrate.init_app(app, db)
 
+# Y AL FINAL CREAR TABLAS
+with app.app_context():
+    db.create_all()
 
 @app.route("/")
 def home():
