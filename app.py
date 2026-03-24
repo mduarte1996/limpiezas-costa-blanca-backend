@@ -27,16 +27,31 @@ def home():
 def create_service_request():
     data = request.get_json()
 
-    scheduled_date = datetime.strptime(
-        data["scheduled_date"], "%Y-%m-%d"
-    ).date()
+    # Validaciones básicas
+    if not data.get("client_name") or not data.get("phone"):
+        return {"error": "Nombre y teléfono son obligatorios"}, 400
+
+    try:
+        scheduled_date = datetime.strptime(
+            data["scheduled_date"], "%Y-%m-%d"
+        ).date()
+    except:
+        return {"error": "Fecha inválida o faltante"}, 400
+
+    # Tipos seguros
+    price = float(data.get("price", 0))
+    hours = int(data.get("hours", 0))
+    urgent = bool(data.get("urgent", False))
 
     new_request = ServiceRequest(
         client_name=data["client_name"],
         phone=data["phone"],
-        address=data["address"],
-        service_type=data["service_type"],
-        scheduled_date=scheduled_date
+        address=data.get("address"),
+        service_type=data.get("service_type"),
+        scheduled_date=scheduled_date,
+        price=price,
+        hours=hours,
+        urgent=urgent
     )
 
     db.session.add(new_request)
