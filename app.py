@@ -3,13 +3,17 @@ from extensions import db, migrate
 from models import ServiceRequest
 from datetime import datetime
 from flask_cors import CORS
+from flask_jwt_extended import JWTManager, create_access_token
  
 app = Flask(__name__)
 CORS(app)
 
 # PRIMERO CONFIG
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.db"
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False 
+
+app.config["JWT_SECRET_KEY"] = "your_jwt_secret_key"
+jwt = JWTManager(app)
 
 # LUEGO INICIALIZAR
 db.init_app(app)
@@ -123,13 +127,13 @@ if __name__ == "__main__":
 
 @app.route("/login", methods=["POST"])
 def login():
-
     data = request.json
 
-    username = data.get("username")
-    password = data.get("password")
+    user = User.query.filter_by(username=data["username"]).first()
 
-    if username == "admin" and password == "1234":
-        return jsonify({"token": "abc123"}), 200
+    if not user or user.password != data["password"]:
+        return {"error": "Credenciales incorrectas"}, 401
 
-    return jsonify({"error": "Credenciales incorrectas"}), 401
+    token = create_access_token(identity=user.id)
+
+    return {"token": token}, 200
