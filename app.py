@@ -137,3 +137,15 @@ def login():
     token = create_access_token(identity=user.id)
 
     return {"token": token}, 200
+
+@app.route("/stats", methods=["GET"])
+def get_stats():
+    services = ServiceRequest.query.all()
+
+    total_income = sum(s.price or 0 for s in services)
+    total_services = len(services)
+
+    return {
+        "income": total_income,
+        "services": total_services
+    }
