@@ -148,4 +148,23 @@ def get_stats():
     return {
         "income": total_income,
         "services": total_services
-    }
+    } 
+
+@app.route('/reviews', methods=['GET'])
+def get_reviews():
+    reviews = Review.query.all()
+    return jsonify([r.serialize() for r in reviews]), 200
+
+@app.route('/reviews', methods=['POST'])
+def create_review():
+    data = request.json
+
+    new_review = Review(
+        name=data.get("name"),
+        message=data.get("message")
+    )
+
+    db.session.add(new_review)
+    db.session.commit()
+
+    return jsonify(new_review.serialize()), 201
