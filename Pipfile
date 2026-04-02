@@ -22,6 +22,7 @@ sqlalchemy = "==2.0.47"
 typing-extensions = "==4.15.0"
 werkzeug = "==3.1.6"
 flask-cors = "*"
+flask-jwt-extended = "*"
 
 [dev-packages]
 
