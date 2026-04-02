@@ -161,7 +161,8 @@ def create_review():
 
     new_review = Review(
         name=data.get("name"),
-        message=data.get("message")
+        message=data.get("message"),
+        rating=data.get("rating")
     )
 
     db.session.add(new_review)
