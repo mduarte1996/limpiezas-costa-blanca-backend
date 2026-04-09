@@ -168,4 +168,16 @@ def create_review():
     db.session.add(new_review)
     db.session.commit()
 
-    return jsonify(new_review.serialize()), 201
+    return jsonify(new_review.serialize()), 201 
+
+@app.route('/reviews/<int:id>', methods=['DELETE'])
+def delete_review(id):
+    review = Review.query.get(id)
+
+    if not review:
+        return {"error": "Review no encontrada"}, 404
+
+    db.session.delete(review)
+    db.session.commit()
+
+    return {"message": "Review eliminada"}, 200    
