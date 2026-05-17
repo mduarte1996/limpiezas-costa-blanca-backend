@@ -4,24 +4,28 @@ from models import ServiceRequest, Review, User
 from datetime import datetime
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, create_access_token
- 
+import os
+
 app = Flask(__name__)
 CORS(app)
 
 # PRIMERO CONFIG
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.db"
+
+database_url = os.getenv("DATABASE_URL")
+
+if database_url.startswith("postgres://"):
+    database_url = database_url.replace("postgres://", "postgresql://", 1)
+
+app.config["SQLALCHEMY_DATABASE_URI"] = database_url
+
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False 
 
 app.config["JWT_SECRET_KEY"] = "your_jwt_secret_key"
 jwt = JWTManager(app)
 
-# LUEGO INICIALIZAR
 db.init_app(app)
-migrate.init_app(app, db)
+migrate.init_app(app, db)   
 
-# Y AL FINAL CREAR TABLAS
-with app.app_context():
-    db.create_all()
 
 @app.route("/")
 def home():
