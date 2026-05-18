@@ -37,6 +37,8 @@ jwt = JWTManager(app)
 db.init_app(app)
 migrate.init_app(app, db)   
 
+with app.app_context():
+    db.create_all()
 
 @app.route("/")
 def home():
@@ -136,9 +138,6 @@ def delete_service_request(id):
 
     return {"message": "Solicitud eliminada correctamente"}, 200
 
-if __name__ == "__main__":
-    app.run(debug=True) 
-
 
 @app.route("/login", methods=["POST"])
 def login():
@@ -167,7 +166,7 @@ def get_stats():
 
 @app.route('/reviews', methods=['GET'])
 def get_reviews():
-    reviews = Review.query.all()
+    reviews = Review.query.filter_by(approved=True).all()
     return jsonify([r.serialize() for r in reviews]), 200
 
 @app.route('/reviews', methods=['POST'])
@@ -196,3 +195,28 @@ def delete_review(id):
     db.session.commit()
 
     return {"message": "Review eliminada"}, 200    
+
+@app.route('/reviews/<int:id>/approve', methods=['PUT'])
+def approve_review(id):
+
+    review = Review.query.get(id)
+
+    if not review:
+        return {"error": "Review no encontrada"}, 404
+
+    review.approved = True
+
+    db.session.commit()
+
+    return {"message": "Review aprobada"}, 200
+
+@app.route('/reviews/pending', methods=['GET'])
+def pending_reviews():
+
+    reviews = Review.query.filter_by(approved=False).all()
+
+    return jsonify([r.serialize() for r in reviews]), 200
+
+
+if __name__ == "__main__":
+    app.run(debug=True) 
