@@ -13,23 +13,28 @@ CORS(app)
 
 database_url = os.getenv("DATABASE_URL")
 
-if database_url.startswith("postgres://"):
-    database_url = database_url.replace(
-        "postgres://",
-        "postgresql+psycopg://",
-        1
-    )
+# LOCAL SQLITE
+if not database_url:
+    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.db"
 
-elif database_url.startswith("postgresql://"):
-    database_url = database_url.replace(
-        "postgresql://",
-        "postgresql+psycopg://",
-        1
-    )
+# RENDER POSTGRES
+else:
 
-app.config["SQLALCHEMY_DATABASE_URI"] = database_url
+    if database_url.startswith("postgres://"):
+        database_url = database_url.replace(
+            "postgres://",
+            "postgresql+psycopg://",
+            1
+        )
 
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False 
+    elif database_url.startswith("postgresql://"):
+        database_url = database_url.replace(
+            "postgresql://",
+            "postgresql+psycopg://",
+            1
+        )
+
+    app.config["SQLALCHEMY_DATABASE_URI"] = database_url
 
 app.config["JWT_SECRET_KEY"] = "your_jwt_secret_key"
 jwt = JWTManager(app)

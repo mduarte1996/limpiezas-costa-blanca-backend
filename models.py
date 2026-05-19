@@ -40,13 +40,16 @@ class User(db.Model):
     password = db.Column(db.String(200), nullable=False)
 
 
-approved = db.Column(db.Boolean, default=False)   
-
 class Review(db.Model):
+
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100))
-    message = db.Column(db.Text)
-    rating = db.Column(db.Integer)
+
+    name = db.Column(db.String(100), nullable=False)
+
+    message = db.Column(db.Text, nullable=False)
+
+    rating = db.Column(db.Integer, default=5)
+
     approved = db.Column(db.Boolean, default=False)
 
     def serialize(self):
@@ -57,5 +60,3 @@ class Review(db.Model):
             "rating": self.rating,
             "approved": self.approved
         }
-  
-
