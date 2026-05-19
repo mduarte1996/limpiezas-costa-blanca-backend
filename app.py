@@ -36,14 +36,14 @@ else:
 
     app.config["SQLALCHEMY_DATABASE_URI"] = database_url
 
-app.config["JWT_SECRET_KEY"] = "your_jwt_secret_key"
-jwt = JWTManager(app)
-
 db.init_app(app)
-migrate.init_app(app, db)   
+migrate.init_app(app, db)
 
 with app.app_context():
     db.create_all()
+
+app.config["JWT_SECRET_KEY"] = "your_jwt_secret_key"
+jwt = JWTManager(app)
 
 @app.route("/")
 def home():
